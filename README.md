@@ -1,1 +1,1 @@
-# chat-platform
+# Infinity Base Chat Platform
