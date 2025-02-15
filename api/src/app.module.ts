@@ -11,9 +11,10 @@ import { RoomsModule } from './rooms/rooms.module';
 
 import { RoomsMembershipsModule } from './rooms/rooms-memberships/rooms-memberships.module';
 import { RoomsMembershipsController } from './rooms/rooms-memberships/controller/rooms-memberships.controller';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, RoomsModule, RoomsMembershipsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, RoomsModule, RoomsMembershipsModule, MessagesModule],
   controllers: [AppController, RoomsController, RoomsMembershipsController],
   providers: [AppService, DatabaseService],
 })

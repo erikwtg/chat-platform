@@ -1,21 +1,20 @@
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from "@nestjs/common";
-import { RoomsService } from "../service/rooms.service";
-import { Reflector } from "@nestjs/core";
+import { RoomsMembershipsService } from "../rooms-memberships/service/rooms-memberships.service";
 
 @Injectable()
 export class RoomOwnerOrAdminGuard implements CanActivate {
-  constructor(private roomsService: RoomsService, private reflector: Reflector) {}
+  constructor(private roomsMembershipsService: RoomsMembershipsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const roomId = request.params.id; 
+    const roomId = request.params.id;
 
-    const room = await this.roomsService.getRoomById(roomId);
-    if (!room) throw new ForbiddenException("Sala não encontrada");
+    const membership = await this.roomsMembershipsService.getRoomMembership(roomId, user.id);
+    if (!membership) throw new ForbiddenException("Você não é membro desta sala");
 
-    if (room.ownerId === user.id || user.role === "admin") return true;
+    if (membership.role === "admin" || membership.role === "moderator") return true;
 
-    throw new ForbiddenException("Apenas o dono da sala ou administradores podem modificar esta sala");
+    throw new ForbiddenException("Apenas administradores e moderadores podem modificar esta sala");
   }
 }

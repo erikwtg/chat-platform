@@ -15,8 +15,8 @@ export class RoomsService {
     return this.roomsRepository.findById(id);
   }
 
-  async createRoom(dto: CreateRoomDto, userId: number) {
-    return this.roomsRepository.createRoom({...dto, ownerId: userId});
+  async createRoom(dto: CreateRoomDto) {
+    return this.roomsRepository.createRoom(dto);
   }
 
   async updateRoom(id: number, dto: UpdateRoomDto) {
