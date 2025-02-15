@@ -14,4 +14,8 @@ export class RoomsMembershipsService {
   async leaveRoom(userId: number, roomId: number) {
     return this.roomsMembershipsRepository.removeUserFromRoom(userId, roomId);
   }
+
+  async getRoomMembership(roomId: number, userId: number) {
+    return this.roomsMembershipsRepository.getRoomMembership(roomId, userId);
+  }
 }

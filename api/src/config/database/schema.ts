@@ -17,7 +17,6 @@ export const rooms = pgTable("rooms", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).unique().notNull(),
   shortId: varchar("short_id", { length: 10 }).unique().notNull(),
-  ownerId: integer("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   shortIdIdx: unique("short_id_idx").on(table.shortId),

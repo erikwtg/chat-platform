@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { db } from "../../config/drizzle/config";
-import { rooms } from "../../config/database/schema";
+import { roomMemberships, rooms, users } from "../../config/database/schema";
 import { eq } from "drizzle-orm";
 import { CreateRoomDto } from "../dto/create-room.dto";
 
@@ -15,13 +15,9 @@ export class RoomsRepository {
     return result[0] || null;
   }
 
-  async createRoom(data: CreateRoomDto & {ownerId: number}) {
+  async createRoom(dto: CreateRoomDto) {
     const shortId = Math.random().toString(36).substring(7);
-    return db.insert(rooms).values({ 
-      ...data,
-      shortId,
-      ownerId: data.ownerId
-    }).returning();
+    return db.insert(rooms).values({ ...dto, shortId }).returning();
   }
 
   async updateRoom(id: number, name: string) {
