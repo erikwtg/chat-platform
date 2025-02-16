@@ -22,12 +22,6 @@ export class RoomsMembershipsController {
   @UseGuards(JwtAuthGuard)
   @Get(":roomId/members/:userId")
   async getRoomMemberhip(@Param("roomId") roomId: string, @Param("userId") userId: string) {
-    const members = await this.roomsMembershipsService.getRoomMembership(parseInt(roomId, 10), parseInt(userId, 10));
-
-    if (!members) {
-      return { message: "Nenhum membro encontrado nesta sala" };
-    }
-
-    return members;
+    return await this.roomsMembershipsService.getRoomMembership(parseInt(roomId, 10), parseInt(userId, 10));
   }
 }

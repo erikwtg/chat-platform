@@ -11,7 +11,7 @@ export class RoomOwnerOrAdminGuard implements CanActivate {
     const roomId = request.params.id;
 
     const membership = await this.roomsMembershipsService.getRoomMembership(roomId, user.id);
-    if (!membership) throw new ForbiddenException("Você não é membro desta sala");
+    if (!membership || 'message' in membership) throw new ForbiddenException("Você não é membro desta sala");
 
     if (membership.role === "admin" || membership.role === "moderator") return true;
 

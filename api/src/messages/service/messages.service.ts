@@ -2,12 +2,19 @@ import { Injectable, ForbiddenException, NotFoundException } from "@nestjs/commo
 import { MessagesRepository } from "../repository/messages.repository";
 import { CreateMessageDto } from "../dto/create-message.dto";
 import { UpdateMessageDto } from "../dto/update-message.dto";
+import { RoomMembershipsRepository } from "src/rooms/rooms-memberships/repository/rooms-memberships.repository";
 
 @Injectable()
 export class MessagesService {
-  constructor(private readonly messagesRepository: MessagesRepository) {}
+  constructor(
+    private readonly messagesRepository: MessagesRepository,
+    private readonly roomsMembershipRepository: RoomMembershipsRepository
+  ) {}
 
   async sendMessage(dto: CreateMessageDto, userId: number) {
+    const membership = await this.roomsMembershipRepository.getRoomMembership(dto.roomId, userId)
+    if (!membership || 'message' in membership) throw new ForbiddenException("Você não é membro desta sala");
+
     return this.messagesRepository.createMessage({ ...dto, userId });
   }
 

@@ -5,8 +5,8 @@ import { eq, and } from "drizzle-orm";
 
 @Injectable()
 export class RoomMembershipsRepository {
-  async addUserToRoom(userId: number, roomId: number) {
-    return db.insert(roomMemberships).values({ userId, roomId }).execute();
+  async addUserToRoom(userId: number, roomId: number, role: "admin" | "moderator" | "member") {
+    return db.insert(roomMemberships).values({ userId, roomId, role }).execute();
   }
 
   async removeUserFromRoom(userId: number, roomId: number) {

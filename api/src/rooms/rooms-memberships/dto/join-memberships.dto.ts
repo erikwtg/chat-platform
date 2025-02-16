@@ -6,4 +6,7 @@ export class JoinRoomDto {
 
   @IsNotEmpty()
   roomId: number;
+
+  @IsNotEmpty()
+  role: "admin" | "moderator" | "member";
 }
