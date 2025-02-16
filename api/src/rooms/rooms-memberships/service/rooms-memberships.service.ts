@@ -29,7 +29,7 @@ export class RoomsMembershipsService {
   }
 
   async getRoomMembership(roomId: number, userId: number) {
-    const members = this.roomsMembershipsRepository.getRoomMembership(roomId, userId);
+    const members = await this.roomsMembershipsRepository.getRoomMembership(roomId, userId);
     
     if (!members) {
       return { message: "Nenhum membro encontrado nesta sala" };
