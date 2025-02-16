@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseService } from './database/service/database.service';
+import { CustomIoAdapter } from './socker-io-adapter';
 
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -16,10 +16,11 @@ import { RoomsMembershipsController } from './rooms/rooms-memberships/controller
 
 import { MessagesModule } from './messages/messages.module';
 
-import { RoomGateway } from './rooms/gateway/room.gateway';
-
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { RabbitMQService } from './rabbitmq/rabbitmq.service';
+
+// import { RoomGateway } from './rooms/gateway/room.gateway';
+
 // import { RabbitMQConsumer } from './rabbitmq/rabbitmq.consumer';
 
 @Module({
@@ -34,11 +35,12 @@ import { RabbitMQService } from './rabbitmq/rabbitmq.service';
   ],
   controllers: [AppController, RoomsController, RoomsMembershipsController],
   providers: [
-    RabbitMQService,
-    // RabbitMQConsumer,
     AppService,
+    RabbitMQService,
+    CustomIoAdapter,
     DatabaseService,
-    RoomGateway
+    // RabbitMQConsumer,
+    // RoomGateway,
   ],
 })
 export class AppModule {}

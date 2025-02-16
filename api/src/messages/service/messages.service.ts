@@ -12,10 +12,18 @@ export class MessagesService {
   ) {}
 
   async sendMessage(dto: CreateMessageDto, userId: number) {
-    const membership = await this.roomsMembershipRepository.getRoomMembership(dto.roomId, userId)
-    if (!membership || 'message' in membership) throw new ForbiddenException("Você não é membro desta sala");
+    try {
+      const membership = await this.roomsMembershipRepository.getRoomMembership(dto.roomId, userId);
+      if (!membership || 'message' in membership) {
+        throw new ForbiddenException("Você não é membro desta sala");
+      }
 
-    return this.messagesRepository.createMessage({ ...dto, userId });
+      const message = await this.messagesRepository.createMessage({ ...dto, userId });
+      return message;
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      throw error;
+    }
   }
 
   async updateMessage(messageId: number, dto: UpdateMessageDto, userId: number) {
@@ -28,18 +36,22 @@ export class MessagesService {
       // editHistory: ""
     }
 
-    return this.messagesRepository.updateMessage(messageId, messageDto);
+    const updateMessage = this.messagesRepository.updateMessage(messageId, messageDto);
+    return updateMessage;
   }
 
   async deleteMessage(messageId: number, userId: number) {
     const message = await this.messagesRepository.getMessageById(messageId);
+
     if (message.userId !== userId) throw new ForbiddenException("Você só pode deletar suas próprias mensagens");
 
-    return this.messagesRepository.deleteMessage(messageId);
+    const deleteMessage = await this.messagesRepository.deleteMessage(messageId);
+    return deleteMessage;
   }
 
   async getMessageById(messageId: number) {
     const message = await this.messagesRepository.getMessageById(messageId);
+
     if (!message) throw new NotFoundException("Mensagem não encontrada.");
     return message;
   }
