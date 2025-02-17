@@ -1,6 +1,8 @@
 "use client"
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { useRooms } from "../hooks/useRooms";
+import { useWebSocket } from "../hooks/useWebSocket";
+import { useAuth } from "../hooks/useAuth";
 
 export interface Message {
   id?: string;
@@ -18,6 +20,8 @@ interface MessageContextType {
   setSelectedMessage: (message: Message | null) => void;
   createMessage: (message: Message) => Promise<void>;
   fetchMessages: () => Promise<void>;
+  wsMessages: any[];
+  sendMessage: (event: string, data?: any) => void;
 }
 
 export const MessageContext = createContext<MessageContextType>({} as MessageContextType);
@@ -27,12 +31,19 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [loading, setLoading] = useState(false);
   const { selectedRoom } = useRooms();
+  const { sendMessage, wsMessages } = useWebSocket("/message");
+  const { user } = useAuth();
 
   useEffect(() => {
     if (selectedRoom) {
       fetchMessages();
     }
   }, []);
+
+  useEffect(() => {
+    // const chatMessages = wsMessages.filter((msg) => msg.event === "message_received");
+    setMessages([...messages, ...wsMessages]);
+  }, [wsMessages]);
 
   const fetchMessages = async () => {
     if (!selectedRoom) return;
@@ -81,6 +92,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (response.ok) {
+        sendMessage("send_message", { roomId: selectedRoom?.id, userId: user?.id, content: message.content });
         setMessages([...messages, ...data]);
       }
     } catch (error) {
@@ -92,7 +104,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <MessageContext.Provider value={{ messages, loading, selectedMessage, setSelectedMessage, createMessage, fetchMessages }}>
+    <MessageContext.Provider value={{ messages, loading, selectedMessage, setSelectedMessage, createMessage, fetchMessages, wsMessages: wsMessages, sendMessage }}>
       {children}
     </MessageContext.Provider>
   );

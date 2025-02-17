@@ -21,7 +21,7 @@ interface RoomsContextType {
   members: Member[];
   loading: boolean;
   selectedRoom: Room | null;
-  setSelectedRoom: (room: Room | null) => void;
+  selectRoom: (room: Room | null) => void;
   createRoom: (room: { name: string }) => Promise<void>;
   fetchRooms: () => Promise<void>;
   joinRoom: (roomId: number) => Promise<void>;
@@ -39,8 +39,17 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
   useEffect(() => {
+    const storedRoom = localStorage.getItem("selectedRoom");
+    if (storedRoom) {
+      setSelectedRoom(JSON.parse(storedRoom));
+    }
     fetchRooms();
   }, []);
+
+  const selectRoom = (room: Room | null) => {
+    localStorage.setItem("selectedRoom", JSON.stringify(room));
+    setSelectedRoom(room);
+  }
 
   const fetchRooms = async () => {
     setLoading(true);
@@ -88,8 +97,6 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
 
       const newRoom = await response.json();
 
-
-      console.log(newRoom);
       // Todo[Erik] - Fazer essa implementação na API.
       Object.assign(newRoom, { isMember: false });
 
@@ -203,7 +210,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
       members,
       loading, 
       selectedRoom, 
-      setSelectedRoom, 
+      selectRoom, 
       createRoom, 
       fetchRooms, 
       joinRoom, 
