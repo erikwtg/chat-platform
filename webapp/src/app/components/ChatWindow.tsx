@@ -1,20 +1,29 @@
-interface Message {
-  user: string;
-  text: string;
-}
+"use client"
+import { useEffect } from "react";
+import { useMessages } from "../hooks/useMessages";
+import { useRooms } from "../hooks/useRooms";
 
-interface ChatWindowProps {
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-}
+const formatDate = (date?: string) => {
+  if (!date) return '';
+  return new Date(date).toLocaleTimeString();
+};
 
-export function ChatWindow({ messages, setMessages }: ChatWindowProps) {
+export function ChatWindow() {
+  const { messages, fetchMessages } = useMessages();
+  const { selectedRoom } = useRooms();
+  useEffect(() => {
+    if (selectedRoom) {
+      fetchMessages();
+    }
+  }, []);
+
   return (
     <div className="flex-grow overflow-auto mt-4 max-h-[calc(100vh-150px)]">
-      <div className="space-y-3">
+      <div className="space-y-1">
         {messages.map((msg, index) => (
-          <div key={index} className="bg-gray-700 p-2 rounded-md border border-gray-600">
-            <span className="font-semibold">{msg.user}:</span> {msg.text}
+          <div key={index} className="flex flex-col p-2">
+            <span className="font-semibold">{msg?.username ?? 'Você'} - {formatDate(msg?.createdAt)}</span>
+            <span className="font-semibold px-4 text-white">{msg.content}</span>
           </div>
         ))}
       </div>
