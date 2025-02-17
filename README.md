@@ -1,6 +1,6 @@
 # Infinity Base Chat Platform
 
-![GitHub](https://img.shields.io/github/erikwtg/chat-platform)
+![GitHub](https://img.shields.io/github/license/erikwtg/chat-platform)
 ![Docker](https://img.shields.io/badge/Docker-✓-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-✓-green)
 ![NestJS](https://img.shields.io/badge/NestJS-✓-green)
