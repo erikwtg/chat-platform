@@ -25,6 +25,8 @@ services:
     command: ["sh", "-c", "npm install && npx drizzle-kit generate --name=create_initial_tables && npx drizzle-kit migrate && npm run start:dev"]
     ports:
       - 3000:3000
+      - 3001:3001
+      - 4100:4100
     depends_on:
       postgres:
         condition: service_healthy
@@ -57,43 +59,30 @@ services:
       - 5672:5672
       - 15672:15672
     environment:
-      RABBITMQ_DEFAULT_USER: infinity
-      RABBITMQ_DEFAULT_PASS: infinity
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # consumer-work:
-  #   <<: *shared-environment
-  #   image: node:22.12.0
-  #   working_dir: /app
-  #   volumes:
-  #     - ./consumer-work:/app
-  #   container_name: infinity_base_consumer-work
-  #   command: ["node", "--watch", "--experimental-strip-types", "index.ts"]
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     wiremock:
-  #       condition: service_healthy
-
-  # webapp:
-  #   <<: *shared-environment
-  #   image: node:22.12.0
-  #   working_dir: /app
-  #   container_name: infinity_base_webapp
-  #   command: ["sh", "-c", "npm install && npm run dev"]
-  #   volumes:
-  #     - ./webapp:/app/
-  #   ports:
-  #     - 5173:5173
-  #   environment:
-  #     - VITE_API_URL=http://localhost:3000
-  #     - HOST=0.0.0.0
-  #   depends_on:
-  #     - api
+  webapp:
+    <<: *shared-environment
+    image: node:22.12.0
+    working_dir: /app
+    container_name: infinity_base_webapp
+    command: ["sh", "-c", "npm install && npm run dev"]
+    volumes:
+      - ./webapp:/app/
+    ports:
+      - 3002:3002
+    environment:
+      - NEXT_PUBLIC_PORT=3001
+      - NEXT_API_URL=http://localhost:3000
+      - HOST=0.0.0.0
+    depends_on:
+      - api
 
 volumes:
   postgres-data:
