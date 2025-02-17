@@ -1,23 +1,32 @@
-import { Room } from "./Rooms";
+import { useEffect } from "react";
+import { useRooms } from "../hooks/useRooms";
 
-interface MembersProps {
-  currentRoom: Room | null;
-  users: string[];
+interface Member {
+  id: number;
+  username: string;
 }
 
-export function Members({ currentRoom, users }: MembersProps) {
+export function Members() {
+  const { selectedRoom, fetchMember, members } = useRooms();
+
+  useEffect(() => {
+    if (selectedRoom) {
+      fetchMember(selectedRoom.id);
+    }
+  }, []);
+
   return (
     <div className="w-1/6 flex flex-col items-center bg-gray-800 p-4 border-l-2 border-gray-700">
-      {currentRoom ? (
+      {selectedRoom ? (
         <>
           <h2 className="text-lg font-semibold mb-4">Usuários na Sala</h2>
           <div className="bg-gray-700 p-3 rounded-md flex-1 flex flex-col space-y-2 overflow-y-auto w-full">
-            {users.map((user, index) => {
+            {members.map((user: Member, index: number) => {
               // const randomColor = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`; // Cores vivas e aleatórias
               const randomColor = `hsl(0, 0%, ${Math.floor(Math.random() * 100)}%)`;
               return (
                 <span key={index} style={{ color: randomColor }} className="text-lg">
-                  {user}
+                  {user.username}
                 </span>
               );
             })}

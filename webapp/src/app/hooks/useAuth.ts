@@ -1,17 +1,4 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
-export function useAuth() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSignIn, setIsSignIn] = useState(false);
-
-  const handleSignIn = () => {
-    setIsLoggedIn(true);
-    setIsSignIn(false);
-  };
-
-  const handleSignOut = () => {
-    setIsLoggedIn(false);
-  };
-
-  return { isLoggedIn, isSignIn, handleSignIn, handleSignOut };
-}
+export const useAuth = () => useContext(AuthContext);

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useRooms } from './hooks/useRooms';
 
 import { Sidebar } from './components/Sidebar'
 import { ChatWindow } from './components/ChatWindow'
@@ -17,9 +17,7 @@ interface Room {
 }
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [users, setUsers] = useState(['Usuário 1', 'Usuário 2', 'Usuário 3']); // Usuários na sala
-  const [currentRoom, setCurrentRoom] = useState<Room | null>({ id: 1, name: 'Sala 1' });
+  const { selectedRoom } = useRooms();
 
   return (
     <div className="h-screen bg-gray-900 text-green-400 font-mono flex flex-col">
@@ -31,9 +29,9 @@ export default function Home() {
         <Sidebar />
 
         <main className="flex-1 flex flex-col">
-          {currentRoom ? (
+          {selectedRoom ? (
             <>
-              <ChatWindow messages={messages} setMessages={setMessages} />
+              <ChatWindow />
               <Footer />
             </>
           ) : (
@@ -44,7 +42,7 @@ export default function Home() {
         </main>
 
         {/* Área de usuários na sala */}
-        <Members currentRoom={currentRoom} users={users} />
+        <Members />
       </div>
     </div>
   );

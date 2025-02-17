@@ -8,5 +8,5 @@ export class JoinRoomDto {
   roomId: number;
 
   @IsNotEmpty()
-  role: "admin" | "moderator" | "member";
+  role?: "admin" | "moderator" | "member";
 }

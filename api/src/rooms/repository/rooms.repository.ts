@@ -1,13 +1,28 @@
 import { Injectable } from "@nestjs/common";
 import { db } from "../../config/drizzle/config";
 import { roomMemberships, rooms, users } from "../../config/database/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
 import { CreateRoomDto } from "../dto/create-room.dto";
 
 @Injectable()
 export class RoomsRepository {
-  async findAll() {
-    return db.select().from(rooms);
+  async findAll(userId: number) {
+    return db.select({
+      id: rooms.id,
+      name: rooms.name,
+      createdAt: rooms.createdAt,
+      isMember: sql`
+        CASE 
+          WHEN COUNT(${roomMemberships.userId}) > 0 THEN TRUE 
+          ELSE FALSE 
+        END
+      `.as("isMember"),
+    })
+    .from(rooms)
+    .leftJoin(roomMemberships, 
+      and(eq(rooms.id, roomMemberships.roomId), eq(roomMemberships.userId, userId))
+    )
+    .groupBy(rooms.id);
   }
 
   async findById(id: number) {

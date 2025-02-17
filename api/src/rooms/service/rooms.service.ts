@@ -7,8 +7,8 @@ import { UpdateRoomDto } from "../dto/update-room.dto";
 export class RoomsService {
   constructor(private readonly roomsRepository: RoomsRepository) {}
 
-  async findAll() {
-    return this.roomsRepository.findAll();
+  async findAll(userId: number) {
+    return this.roomsRepository.findAll(userId);
   }
 
   async findById(id: number) {

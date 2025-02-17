@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { db } from "../../config/drizzle/config";
 import { messages } from "../../config/database/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 @Injectable()
 export class MessagesRepository {
@@ -22,6 +22,6 @@ export class MessagesRepository {
   }
 
   async getMessagesByRoom(roomId: number, limit = 20) {
-    return db.select().from(messages).where(eq(messages.roomId, roomId)).orderBy(desc(messages.createdAt)).limit(limit).execute();
+    return db.select().from(messages).where(eq(messages.roomId, roomId)).orderBy(asc(messages.createdAt)).limit(limit).execute();
   }
 }

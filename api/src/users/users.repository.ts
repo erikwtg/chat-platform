@@ -31,7 +31,8 @@ export class UsersRepository {
   }
 
   async createUser(username: string, email: string, hashedPassword: string) {
-    return await db.insert(users).values({ username, email, password: hashedPassword });
+    const result = await db.insert(users).values({ username, email, password: hashedPassword }).returning();
+    return result[0];
   }
 
   async updateUser(id: number, dto) {

@@ -1,49 +1,30 @@
 import { useState } from "react"
-
+import { useAuth } from "../hooks/useAuth"
 import { Button } from "./Button";
 
 interface LoginProps {
   className?: string;
-  isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => void;
-  setIsSignIn: (value: boolean) => void;
-  // username: string;
-  // password: string;
-  // setUsername: (value: string) => void;
-  // setPassword: (value: string) => void;
-  // handleLogin: () => void;
-  // handleLogout: () => void;
 }
 
-// export function Login({ isLoggedIn, username, setUsername, handleLogin, handleLogout }: LoginProps) {
-export function Login({
-  className,
-  isLoggedIn,
-  setIsLoggedIn,
-  setIsSignIn,
-  // username,
-  // setUsername,
-  // handleLogin,
-  // handleLogout
-}: LoginProps) {
-  const [username, setUsername] = useState('')
+export function Login({ className }: LoginProps) {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  // const [isLoggedIn, setIsLoggedIn] = useState(true)
+  
+  const { login, logout, isAuthenticated, setIsSignIn } = useAuth();
 
   const handleLogin = () => {
-    console.log(username, password)
-    setIsLoggedIn(true)
+    login({ email, password })
   }
 
   const handleLogout = () => {
-    setIsLoggedIn(false)
+    logout()
   }
 
   const handleSignIn = () => {
     setIsSignIn(true)
   }
 
-  return isLoggedIn ? (
+  return isAuthenticated ? (
     <div className={`${className}`}>
       <Button onClick={handleLogout}>
         Sair
@@ -53,18 +34,22 @@ export function Login({
     <div className={`py-4 ${className}`}>
       <h2 className="text-lg font-semibold mb-4">Login</h2>
       <input
+        id="email"
         type="text"
         className="bg-gray-700 text-green-400 p-2 rounded-md w-full mb-4"
-        placeholder="Nome"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        autoComplete="off"
       />
       <input
+        id="password"
         type="text"
         className="bg-gray-700 text-green-400 p-2 rounded-md w-full mb-4"
         placeholder="Senha"
-        value={username}
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
+        autoComplete="off"
       />
 
       <div className="flex flex-col gap-4 w-full">

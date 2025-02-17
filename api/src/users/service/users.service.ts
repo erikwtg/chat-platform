@@ -22,7 +22,17 @@ export class UsersService {
 
   async createUser(dto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    return await this.usersRepository.createUser(dto.username, dto.email, hashedPassword);
+
+    const existingUser = await this.usersRepository.findByEmail(dto.email);
+    if (existingUser) {
+      return {
+        error: true,
+        message: "Usuário já existe",
+      }
+    }
+
+    const user = await this.usersRepository.createUser(dto.username, dto.email, hashedPassword);
+    return user;
   }
 
   async updateUser(id: number, dto: UpdateUserDto) {

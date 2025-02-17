@@ -1,14 +1,23 @@
 import { useState } from "react";
+import { useMessages } from "../hooks/useMessages";
+import { useRooms } from "../hooks/useRooms";
 
 export function Footer() {
   const [message, setMessage] = useState('');
+  const { createMessage } = useMessages();
+  const { selectedRoom } = useRooms();
 
   const handleSendMessage = () => {
-    console.log('send message');
+    createMessage({
+      content: message,
+      roomId: selectedRoom?.id?.toString() || '',
+    });
+
+    setMessage('');
   };
 
   return (
-    <footer className="bg-gray-800 p-4 flex border-t-2 border-gray-700">
+    <footer className="mt-auto bg-gray-800 p-4 flex border-t-2 border-gray-700">
       <input
         type="text"
         className="flex-grow bg-transparent border-2 border-green-400 text-green-400 p-2 rounded-l-md outline-none"
