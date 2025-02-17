@@ -7,7 +7,7 @@ export function Rooms() {
   const [roomName, setRoomName] = useState('');
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
 
-  const { rooms, createRoom, fetchRooms, joinRoom, leaveRoom, selectedRoom, setSelectedRoom } = useRooms();
+  const { rooms, createRoom, fetchRooms, joinRoom, leaveRoom, selectedRoom, selectRoom } = useRooms();
 
   useEffect(() => {
     fetchRooms();
@@ -36,7 +36,7 @@ export function Rooms() {
 
   const handleSelectRoom = (roomId: number) => {
     const room = rooms.find(room => room.id === roomId);
-    setSelectedRoom(room as Room);
+    selectRoom(room as Room);
   };
 
   return (

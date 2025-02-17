@@ -33,7 +33,7 @@ export default function RootLayout({
         <AuthProvider>
           <RoomsProvider>
             <MessageProvider>
-              {children}
+            {children}
             </MessageProvider>
           </RoomsProvider>
         </AuthProvider>

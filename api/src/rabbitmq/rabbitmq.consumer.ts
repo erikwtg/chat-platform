@@ -9,4 +9,9 @@ export class RabbitMQConsumer {
   async handleRoomCreated(@Payload() data: any) {
     console.log('📢 Evento global da aplicação:', data);
   }
+
+  @EventPattern('message_received')
+  async handleMessageReceived(@Payload() data: any) {
+    console.log('📢 Evento message_received:', data);
+  }
 }
