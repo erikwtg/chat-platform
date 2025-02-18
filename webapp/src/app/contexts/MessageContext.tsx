@@ -2,13 +2,15 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { useRooms } from "../hooks/useRooms";
 import { useWebSocket } from "../hooks/useWebSocket";
-import { useAuth } from "../hooks/useAuth";
 
 export interface Message {
   id?: string;
   content: string;
   username?: string;
   roomId: string;
+  userId: string;
+  editHistory?: Message[];
+  isEdited?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -32,17 +34,17 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const { selectedRoom } = useRooms();
   const { sendMessage, wsMessages } = useWebSocket("/message");
-  const { user } = useAuth();
 
   useEffect(() => {
     if (selectedRoom) {
       fetchMessages();
     }
-  }, []);
+  }, [selectedRoom]);
+  // Todo[Erik] - Ao carregar mensagens por sala para de funcionar realtime do socket.
 
   useEffect(() => {
-    // const chatMessages = wsMessages.filter((msg) => msg.event === "message_received");
-    setMessages([...messages, ...wsMessages]);
+    const updatedMessages = [...messages, ...wsMessages];
+    setMessages(updatedMessages);
   }, [wsMessages]);
 
   const fetchMessages = async () => {
@@ -92,8 +94,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (response.ok) {
-        sendMessage("send_message", { roomId: selectedRoom?.id, userId: user?.id, content: message.content });
-        setMessages([...messages, ...data]);
+        sendMessage("send_message", data);
       }
     } catch (error) {
       console.error("Erro ao criar mensagem:", error);

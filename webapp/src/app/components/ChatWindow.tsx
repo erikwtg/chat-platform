@@ -1,5 +1,5 @@
 "use client"
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useMessages } from "../hooks/useMessages";
 import { useRooms } from "../hooks/useRooms";
 
@@ -11,11 +11,17 @@ const formatDate = (date?: string) => {
 export function ChatWindow() {
   const { messages, fetchMessages } = useMessages();
   const { selectedRoom } = useRooms();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (selectedRoom) {
       fetchMessages();
     }
   }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="flex-grow overflow-auto mt-4 max-h-[calc(100vh-150px)]">
@@ -26,6 +32,7 @@ export function ChatWindow() {
             <span className="font-semibold px-4 text-white">{msg.content}</span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );
