@@ -2,6 +2,8 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { useAuth } from "../hooks/useAuth";
 
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
 export interface Room {
   id: number;
   name: string;
@@ -37,9 +39,10 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { storedValue, setItem } = useLocalStorage("user_data");
 
   useEffect(() => {
-    const storedRoom = localStorage.getItem("selectedRoom");
+    const storedRoom = storedValue.selectedRoom;
     if (storedRoom) {
       setSelectedRoom(JSON.parse(storedRoom));
     }
@@ -47,7 +50,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const selectRoom = (room: Room | null) => {
-    localStorage.setItem("selectedRoom", JSON.stringify(room));
+    setItem("selectedRoom", JSON.stringify(room));
     setSelectedRoom(room);
   }
 
@@ -57,7 +60,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetch("http://localhost:3000/rooms", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
         },
         method: "GET",
       });
@@ -88,7 +91,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await fetch("http://localhost:3000/rooms", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           "Content-Type": "application/json",
         },
         method: "POST",
@@ -125,7 +128,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await fetch(`http://localhost:3000/rooms-memberships/join`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           "Content-Type": "application/json",
         },
         method: "POST",
@@ -160,7 +163,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await fetch(`http://localhost:3000/rooms-memberships/leave`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           "Content-Type": "application/json",
         },
         method: "DELETE",
@@ -187,7 +190,7 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetch(`http://localhost:3000/rooms-memberships/${roomId}/members/${user?.id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           "Content-Type": "application/json",
       },
         method: "GET",

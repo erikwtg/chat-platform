@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
+import {createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 
 interface WebSocketContextType {
   sendMessage: (event: string, data?: any) => void;

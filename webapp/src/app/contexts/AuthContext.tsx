@@ -2,6 +2,8 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
 interface User {
   id?: string;
   username?: string;
@@ -34,9 +36,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isSignIn, setIsSignIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const { storedValue, setItem, clear } = useLocalStorage("user_data");
+
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    const user = storedValue.user;
+    const isAuthenticated = storedValue.isAuthenticated;
 
     if (user) {
       setUser(JSON.parse(user));
@@ -92,9 +96,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const responseData = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("token", responseData.accessToken);
-        localStorage.setItem("refresh_token", responseData.refreshToken);
-        localStorage.setItem("isAuthenticated", "true");
+        setItem("token", responseData.accessToken);
+        setItem("refresh_token", responseData.refreshToken);
+        setItem("isAuthenticated", "true");
 
         const decoded: any = jwtDecode(responseData.accessToken);
 
@@ -104,10 +108,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           username: decoded.username,
         }
 
-        localStorage.setItem("user", JSON.stringify(userData));
+        setItem("user", JSON.stringify(userData));
+
         setUser(userData);
 
         setIsAuthenticated(true);
+
         return responseData;
       } else {
         throw new Error("Falha ao fazer login");
@@ -122,13 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("user");
-
-    setIsAuthenticated(false);
-    setUser(null);
+    clear();
   };
 
   return (

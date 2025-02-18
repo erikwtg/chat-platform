@@ -14,6 +14,7 @@ export function ChatWindow() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Todo[Erik] - Verificar se o usuário é membro da sala para poder ver as mensagens.
     if (selectedRoom) {
       fetchMessages();
     }
@@ -24,7 +25,7 @@ export function ChatWindow() {
   }, [messages]);
 
   return (
-    <div className="flex-grow overflow-auto mt-4 max-h-[calc(100vh-150px)]">
+    <div className="flex-grow overflow-auto mt-4 px-2 max-h-[calc(100vh-150px)]">
       <div className="space-y-1">
         {messages.map((msg, index) => (
           <div key={index} className="flex flex-col p-2">

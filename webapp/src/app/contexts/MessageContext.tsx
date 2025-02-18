@@ -2,6 +2,7 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { useRooms } from "../hooks/useRooms";
 import { useWebSocket } from "../hooks/useWebSocket";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export interface Message {
   id?: string;
@@ -24,6 +25,7 @@ interface MessageContextType {
   fetchMessages: () => Promise<void>;
   wsMessages: any[];
   sendMessage: (event: string, data?: any) => void;
+  clearMessages: () => Promise<void>;
 }
 
 export const MessageContext = createContext<MessageContextType>({} as MessageContextType);
@@ -34,6 +36,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const { selectedRoom } = useRooms();
   const { sendMessage, wsMessages } = useWebSocket("/message");
+  const { storedValue } = useLocalStorage("user_data");
 
   useEffect(() => {
     if (selectedRoom) {
@@ -54,7 +57,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const response = await fetch(`http://localhost:3000/messages/${selectedRoom.id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           'Content-Type': 'application/json',
         },
         method: "GET",
@@ -79,7 +82,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetch("http://localhost:3000/messages", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${storedValue.token}`,
           'Content-Type': 'application/json',
         },
         method: "POST",
@@ -104,8 +107,12 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const clearMessages = async () => {
+    setMessages([]);
+  };
+
   return (
-    <MessageContext.Provider value={{ messages, loading, selectedMessage, setSelectedMessage, createMessage, fetchMessages, wsMessages: wsMessages, sendMessage }}>
+    <MessageContext.Provider value={{ messages, loading, selectedMessage, setSelectedMessage, createMessage, fetchMessages, wsMessages: wsMessages, sendMessage, clearMessages }}>
       {children}
     </MessageContext.Provider>
   );
