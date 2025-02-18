@@ -16,6 +16,12 @@ export function Footer() {
     setMessage('');
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
   return (
     <footer className="mt-auto bg-gray-800 p-4 flex border-t-2 border-gray-700">
       <input
@@ -24,6 +30,7 @@ export function Footer() {
         placeholder="Digite uma mensagem..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyPress}
       />
       <button
         className="bg-green-400 text-gray-900 p-2 rounded-r-md hover:bg-green-500 transition duration-200"

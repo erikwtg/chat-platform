@@ -5,18 +5,10 @@ import { Sidebar } from './components/Sidebar'
 import { ChatWindow } from './components/ChatWindow'
 import { Footer } from './components/Footer'
 import { Members } from './components/Members'
-
-interface Message {
-  user: string;
-  text: string;
-}
-
-interface Room {
-  id: number;
-  name: string;
-}
+import { useAuth } from './hooks/useAuth';
 
 export default function Home() {
+  const { user, isAuthenticated } = useAuth();
   const { selectedRoom } = useRooms();
 
   return (
@@ -29,7 +21,7 @@ export default function Home() {
         <Sidebar />
 
         <main className="flex-1 flex flex-col">
-          {selectedRoom ? (
+          {user && isAuthenticated && selectedRoom ? (
             <>
               <ChatWindow />
               <Footer />
@@ -42,7 +34,7 @@ export default function Home() {
         </main>
 
         {/* Área de usuários na sala */}
-        <Members />
+        {user && isAuthenticated && selectedRoom && <Members />}
       </div>
     </div>
   );

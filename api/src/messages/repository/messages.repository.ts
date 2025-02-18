@@ -6,7 +6,7 @@ import { eq, asc } from "drizzle-orm";
 @Injectable()
 export class MessagesRepository {
   async createMessage(data: { content: string; userId: number; roomId: number }) {
-    return db.insert(messages).values(data).returning();
+    return db.insert(messages).values(data).returning().then(rows => rows[0] || null);
   }
 
   async updateMessage(messageId: number, content) {

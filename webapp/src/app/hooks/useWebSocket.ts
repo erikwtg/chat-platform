@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { Message } from "../contexts/MessageContext";
 
 interface WebSocketHook {
   sendMessage: (event: string, data?: any) => void;
-  wsMessages: any[];
+  wsMessages: Message[];
 }
 
 export const useWebSocket = (endpoint: string): WebSocketHook => {
-  const [wsMessages, setWsMessages] = useState<any[]>([]);
+  const [wsMessages, setWsMessages] = useState<Message[]>([]);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -17,9 +18,8 @@ export const useWebSocket = (endpoint: string): WebSocketHook => {
     socket.on("connect", () => console.log(`WebSocket conectado em ${endpoint}`));
 
     socket.on("message_received", (event) => {
-      const messageData = JSON.parse(event.data);
-      console.log("Mensagem recebida no WebSocket: ", messageData);
-      setWsMessages((prev) => [...prev, messageData]);
+      const updatedMessages = [...wsMessages, event];
+      setWsMessages(updatedMessages);
     });
 
     socket.on("disconnect", () => console.log(`WebSocket desconectado de ${endpoint}`));

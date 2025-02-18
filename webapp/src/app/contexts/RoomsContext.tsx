@@ -195,8 +195,6 @@ export const RoomsProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data);
-
       return data;
     } catch (error) {
       console.error("Erro ao buscar membros da sala:", error);
