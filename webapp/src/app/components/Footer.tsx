@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { useMessages } from "../hooks/useMessages";
 import { useRooms } from "../hooks/useRooms";
+import { useAuth } from "../hooks/useAuth";
 
 export function Footer() {
   const [message, setMessage] = useState('');
   const { createMessage } = useMessages();
   const { selectedRoom } = useRooms();
+  const { user } = useAuth();
 
   const handleSendMessage = () => {
     createMessage({
       content: message,
       roomId: selectedRoom?.id?.toString() || '',
+      userId: user?.id || '',
     });
 
     setMessage('');

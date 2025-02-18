@@ -48,7 +48,7 @@ export const MessageProvider = ({ children }: { children: ReactNode }) => {
   }, [wsMessages]);
 
   const fetchMessages = async () => {
-    if (!selectedRoom) return;
+    if (!selectedRoom || !selectedRoom.isMember) return;
     
     try {
       setLoading(true);
